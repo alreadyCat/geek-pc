@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
 import './index.scss'
-import { Card, Form, Input, Button, Checkbox } from 'antd'
+import { Card, Form, Input, Button, Checkbox, message } from 'antd'
 import logo from 'assets/images/logo.png'
+import { login } from 'api/user'
 export default class Login extends Component {
+  state = {
+    loading: false,
+  }
   render() {
     return (
       <div className="login-container">
@@ -14,8 +18,8 @@ export default class Login extends Component {
             validateTrigger={['onBlur']}
             onFinish={this.onFinish}
             initialValues={{
-              mobile: 13487192302,
-              code: 246810,
+              mobile: '13487192302',
+              code: '246810',
               agree: true,
             }}
           >
@@ -79,7 +83,12 @@ export default class Login extends Component {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" block>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                loading={this.state.loading}
+              >
                 登录
               </Button>
             </Form.Item>
@@ -88,7 +97,24 @@ export default class Login extends Component {
       </div>
     )
   }
-  onFinish = (v) => {
-    console.log(v)
+  onFinish = async (v) => {
+    try {
+      this.setState({
+        loading: true,
+      })
+
+      const res = await login(v)
+
+      localStorage.setItem('GEEK-TOKEN', res.data.token)
+
+      this.props.history.push('/home')
+      message.success('登录成功', 2)
+    } catch (error) {
+      message.error(error.response.data.message, 2, () => {
+        this.setState({
+          loading: false,
+        })
+      })
+    }
   }
 }
