@@ -11,3 +11,15 @@ export const login = (data) => {
     data,
   })
 }
+
+/**
+ * 获取用户信息
+ * @returns
+ *
+ */
+export const getUserProfile = () => {
+  return request({
+    url: '/user/profile',
+    method: 'get',
+  })
+}

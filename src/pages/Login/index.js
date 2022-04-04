@@ -1,15 +1,16 @@
 import React, { Component } from 'react'
-import './index.scss'
+import style from './index.module.scss'
 import { Card, Form, Input, Button, Checkbox, message } from 'antd'
 import logo from 'assets/images/logo.png'
 import { login } from 'api/user'
+import { setToken } from 'utils/storage'
 export default class Login extends Component {
   state = {
     loading: false,
   }
   render() {
     return (
-      <div className="login-container">
+      <div className={style['login-container']}>
         <Card className="login-card">
           <img src={logo} className="login-logo" alt="" />
           <Form
@@ -104,10 +105,12 @@ export default class Login extends Component {
       })
 
       const res = await login(v)
+      setToken(res.data.token)
 
-      localStorage.setItem('GEEK-TOKEN', res.data.token)
-
-      this.props.history.push('/home')
+      const redirectPath = this.props.location.state
+        ? this.props.location.state.from
+        : '/home'
+      this.props.history.push(redirectPath)
       message.success('登录成功', 2)
     } catch (error) {
       message.error(error.response.data.message, 2, () => {

@@ -1,0 +1,43 @@
+.home-container {
+  height: 100vh;
+  :global {
+    .ant-layout {
+      height: 100%;
+    }
+    .ant-layout-header {
+      padding: 0;
+      padding-right: 50px;
+      display: flex;
+      justify-content: space-between;
+      .profile {
+        span + span {
+          margin-left: 20px;
+          cursor: pointer;
+        }
+        span {
+          color: #fff;
+          font-weight: 700;
+        }
+        .anticon-logout {
+          margin-right: 5px;
+        }
+      }
+    }
+    .logo {
+      float: left;
+      width: 200px;
+      height: 60px;
+      background-image: url(~assets/images/logo.png);
+      background-size: cover;
+    }
+
+    .ant-row-rtl .logo {
+      float: right;
+      margin: 16px 0 16px 24px;
+    }
+
+    .site-layout-background {
+      background: #fff;
+    }
+  }
+}
