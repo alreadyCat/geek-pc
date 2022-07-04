@@ -2,27 +2,29 @@ import React, { Component } from 'react'
 import { Layout, Menu, Popconfirm, message } from 'antd'
 import style from './index.module.scss'
 import { Route, Switch, Link } from 'react-router-dom'
-import {
-  LogoutOutlined,
-  HomeOutlined,
-  DiffOutlined,
-  EditOutlined,
-} from '@ant-design/icons'
-import DataOverview from './components/DataOverview'
-import ArticlePublish from './components/ArticlePublish'
-import ContentManage from './components/ContentManage'
+import { LogoutOutlined, HomeOutlined, DiffOutlined, EditOutlined } from '@ant-design/icons'
+// import DataOverview from './components/DataOverview'
+// import ArticlePublish from './components/ArticlePublish'
+// import ContentManage from './components/ContentManage'
+
 import { removeToken } from 'utils/storage'
 import { getUserProfile } from 'api/user'
+// 使用组件懒加载
 const { Header, Content, Sider } = Layout
+
+const DataOverview = React.lazy(() => import('./components/DataOverview'))
+const ArticlePublish = React.lazy(() => import('./components/ArticlePublish'))
+const ContentManage = React.lazy(() => import('./components/ContentManage'))
 
 export default class LayoutComponent extends Component {
   state = {
     profile: {},
+    selectedKeys: this.props.location.pathname
   }
   render() {
     return (
       <div className={style['home-container']}>
-        <Layout>
+        <Layout style={{ overflow: 'auto' }}>
           <Header className="header">
             <div className="logo" />
             <div className="profile">
@@ -47,7 +49,7 @@ export default class LayoutComponent extends Component {
                 mode="inline"
                 style={{ height: '100%', borderRight: 0 }}
                 theme="dark"
-                defaultSelectedKeys={[this.props.location.pathname]}
+                selectedKeys={[this.state.selectedKeys]}
               >
                 <Menu.Item key="/home" icon={<HomeOutlined />}>
                   <Link to="/home">数据概览</Link>
@@ -64,6 +66,7 @@ export default class LayoutComponent extends Component {
               <Content className="site-layout-background">
                 <Switch>
                   <Route exact path="/home" component={DataOverview}></Route>
+                  {/* Math.random  由于不加key  修改和添加文章react虚拟dom会进行组件复用导致回显的数据还显示在添加文章中 */}
                   <Route path="/home/ap" component={ArticlePublish}></Route>
                   <Route path="/home/cm" component={ContentManage}></Route>
                 </Switch>
@@ -86,7 +89,16 @@ export default class LayoutComponent extends Component {
   componentDidMount = async () => {
     const res = await getUserProfile()
     this.setState({
-      profile: res.data,
+      profile: res.data
     })
+  }
+
+  // prevProps 上一次的Props
+  componentDidUpdate = (prevProps) => {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
+      this.setState({
+        selectedKeys: this.props.location.pathname
+      })
+    }
   }
 }

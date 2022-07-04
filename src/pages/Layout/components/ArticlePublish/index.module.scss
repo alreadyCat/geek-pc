@@ -1,2 +1,7 @@
 .article-publish-container {
+  :global {
+    .ql-editor {
+      min-height: 300px;
+    }
+  }
 }
